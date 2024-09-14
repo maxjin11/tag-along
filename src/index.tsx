@@ -3,8 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { googleSignIn, googleSignOut } from './services/authService';
-
+import { googleSignIn, googleSignOut } from './services/authService'; 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );

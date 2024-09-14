@@ -19,14 +19,21 @@ function SignInButton() {
       }
     }
   } 
-
-  return <button onClick = {handleSignIn}>Sign in with Google</button>
+ 
+  return( 
+    <div className = " w-screen h-screen flex justify-center flex-col items-center gap-12" >   
+    <div className="absolute inset-0 bg-[url('/public/friends.jpg')] grayscale bg-cover bg-center z-[-1]"></div>
+      <h1 className = "text-white text-7xl drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)]">Welcome to Tag-Along!</h1>
+      <h1 className = "text-white drop-shadow-[0_1.2px_1.2px_rgba(0,0,0,0.8)] text-2xl"> For people who want to see their friends, more!</h1>
+      <button  className = "w-48 bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300" onClick = {handleSignIn}>Sign in with Google</button>
+    </div> ) 
 }
 
 function Login() {
 
   return (
-    <div> 
+    <div>  
+
       <SignInButton />
     </div> 
   )
