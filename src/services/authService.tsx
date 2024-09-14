@@ -1,12 +1,13 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { createDocumentRegistry } from "typescript";
+import env from "react-dotenv";
 
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
 const firebaseConfig = {
-    apiKey: "AIzaSyAx9QzE8M-Iz3RVQjUE5NLkbDVyzOi-uP8",
+    apiKey: env.FIREBASE_API_KEY,
     authDomain: "fir-test-44f77.firebaseapp.com",
     projectId: "fir-test-44f77",
     storageBucket: "fir-test-44f77.appspot.com",
