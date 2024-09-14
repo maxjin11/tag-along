@@ -4,7 +4,7 @@ import React from 'react'
 
 const AddActivity = (props: any) => {
   return (
-    <div>
+    <div className="absolute fixed z-1000 bg-red-500 left-2/3, top-1/4, w-1/4, h-1/2">
       <h1>Looking at {props.location}.</h1>
       <p>Time: {props.time}</p>
     </div>
