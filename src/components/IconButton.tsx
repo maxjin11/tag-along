@@ -1,5 +1,5 @@
 import React, { EventHandler } from 'react'
-
+import '../styles/IconButton.css'
 // Button and Icon lol
 
 interface IconButtonProps {
