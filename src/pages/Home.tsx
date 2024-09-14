@@ -1,50 +1,73 @@
-import React, { useEffect, useState } from 'react'
+import React, { act, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { getUserById } from '../services/userService';
-import MappedIn, { MapView, useMapData, useMap, Label, useEvent } from '@mappedin/react-sdk';
+import MappedIn, { MapView, useMapData, useMap, Label, useEvent, Path } from '@mappedin/react-sdk';
 import '@mappedin/react-sdk/lib/esm/index.css';
 import { createActivity, getActivityById } from '../services/activityService';
 import AddActivity from '../components/AddActivity';
+import { DocumentData } from 'firebase/firestore';
+import Core from '@mappedin/react-sdk/geojson/src/renderer';
+import Mappedin from '@mappedin/react-sdk';
 
 interface Props {
   user:any
 }
 
+interface friendActivity {
+  coords: MappedIn.Coordinate;
+  data: DocumentData;
+  name: string
+}
+
+interface coord {
+  latitude: number;
+  longitude: number;
+}
+ 
 function MyCustomComponent( { user }: Props) {
   const { mapView, mapData } = useMap();
   const [locationState, setLocationState] = useState("");
+  const [userLocation, setUserLocation] = useState<coord>({ latitude:0, longitude:0 });
   const [timeState, setTimeState] = useState(0);
+  const [myLabels, setMyLabels] = useState<friendActivity[]>([]);
 
-  mapData.getByType('space').forEach(space => {
+  useEffect(() => {
+    mapData.getByType('space').forEach(space => {
       mapView.updateState(space, {
           interactive: true,
           hoverColor: "#98FB98"
       });
-  });
+    });
 
-  const loadActivites = async () => {
-    for (const friend of user.friends) {
-      const friendInfo = await getUserById(friend);
-      if (friendInfo) {
-        console.log(friendInfo.activities.length)
-        for (const activity in friendInfo.activities) {
-          const activityInfo = await getActivityById(activity);
-          if (activityInfo) {
-            console.log(activityInfo.title);
-            const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
-            mapView.Labels.add(coords, friendInfo.name, {
-              appearance: {
-              marker: {
-                icon: `<img width="50" height="50" src=${friendInfo.pfp} alt="friend" />`
-              }}
-            });
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        setUserLocation(position.coords);
+      });
+    }
+
+    
+    const loadActivities = async () => {
+      const labels: friendActivity[] = []
+
+      for (const friend of user.friends) {
+        const friendInfo = await getUserById(friend);
+        if (friendInfo) {
+          const activities = friendInfo.activities
+          for (let i = 0; i < activities.length; i++) {
+            const activityInfo = await getActivityById(activities[i]);
+            if (activityInfo) {
+              const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
+              labels.push({ coords:coords, data:activityInfo, name:friendInfo.name });
+            }
           }
         }
       }
+      console.log(labels);
+      setMyLabels(labels);
     }
-  }
 
-  loadActivites();
+    loadActivities();
+  }, [])
 
   useEvent("click", (event) => {
     if (event.spaces[0]) {
@@ -59,8 +82,13 @@ function MyCustomComponent( { user }: Props) {
   return (
     <>
       <AddActivity location={ locationState } time={ timeState }></AddActivity>
-      {mapData.getByType("space").map((space) => {
+      {/* {mapData.getByType("space").map((space) => {
         return <Label key={space.center.latitude} target={space.center} text={space.name} />;
+      })} */}
+      {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
+        const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
+        const directions = mapView.getDirections(userPosition, activity.coords);
+        return directions && <Path coordinate={directions.coordinates} />
       })}
     </>
   );
@@ -84,7 +112,6 @@ function Home() {
         const userProfile = await getUserById(user)
         setUserInfo(userProfile)
         setLoading(false)
-        console.log(userInfo)
       } else {  
         console.log("ERROR!!!")
       }
