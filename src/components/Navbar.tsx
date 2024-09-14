@@ -14,11 +14,15 @@ function Navbar() {
 
   return (
     <div className="navbar">
-        <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
-        <IconButton onClick={() => setOpenSidebar(true)} name="Menu" icon="/menu.png" />
-        <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="/activity.png" />
-        <IconButton onClick={() => setOpenMap(true)} name="Map" icon="/pin.png" />
-        <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />
+        <div className="navbar-left">
+            <IconButton onClick={() => setOpenSidebar(true)} name="Menu" icon="/menu.png" />
+        </div>
+        <div className="navbar-right">
+            <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="/activity.png" />
+            <IconButton onClick={() => setOpenMap(true)} name="Map" icon="/pin.png" />
+            <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />
+            <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
+        </div>
     </div>
   )
 }
