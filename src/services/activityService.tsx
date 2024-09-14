@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 
 // TODO: Replace the following with your app's Firebase project configuration
 // See: https://support.google.com/firebase/answer/7015592
@@ -30,6 +30,8 @@ export async function createActivity(time: string, location: string, title: stri
       bio: bio
     });
     console.log("Document written with ID: ", docRef.id);
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {activities: arrayUnion(docRef.id)})
     return docRef.id
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -56,5 +58,16 @@ export async function getActivityById(id: string) {
   }
 
 export async function deleteActivity(id: string) {
-  await deleteDoc(doc(db, "activities", id));
+  try {
+    const docRef = doc(db, "activities", id);
+    const activity = await getDoc(docRef);
+    const activityData = activity.data();
+    const userId = activityData.user; 
+
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {activities: arrayRemove(docRef.id)})
+    await deleteDoc(docRef);
+  } catch (error) {
+    console.error("Error deleting document:", error);
+  } 
 }
