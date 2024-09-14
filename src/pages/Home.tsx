@@ -93,7 +93,10 @@ function Home() {
   }, [user]);
   if (loading || isLoading) {
     return (
-      <div>Loading</div>
+      <div className = "bg-slate-400 h-screen w-screen flex justify-center items-center">
+
+        <div className = "font-bold text-2xl text-white">Loading...</div>  
+      </div> 
     )
   } 
   return mapData && userInfo ? 
