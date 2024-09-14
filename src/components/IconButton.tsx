@@ -1,5 +1,3 @@
-import React, { EventHandler } from 'react'
-import '../styles/IconButton.css'
 // Button and Icon lol
 
 interface IconButtonProps {
@@ -10,9 +8,8 @@ interface IconButtonProps {
 
 function IconButton({ onClick, name, icon }: IconButtonProps) {
   return (
-    <div className="icon-button" onClick={onClick}>
+    <div onClick={onClick} className = "cursor-pointer w-[30px] h-[30px] mt-[20px] mb-[20px]">
         <img src={icon} alt={name}></img>
-        {name}
     </div>
   )
 }
