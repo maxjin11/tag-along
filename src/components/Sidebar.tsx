@@ -10,12 +10,12 @@ interface SidebarProps {
 
 function Sidebar({handleClose, isOpen}: SidebarProps) {
   
-  if (!isOpen) return null;
-
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
   const [openMap, setOpenMap] = useState(false);
   const [openFriends, setOpenFriends] = useState(false);
+
+  if (!isOpen) return null;
 
   return (
     <div className="sidebar">
