@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import IconButton from './IconButton';
+import '../styles/Navbar.css';
 
 // Navbar at the top of site that has the profile + sidebar + feed + mapview buttons
 
@@ -12,12 +13,12 @@ function Navbar() {
   const [openFriends, setOpenFriends] = useState(false);
 
   return (
-    <div>
-        <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="../../public/user.png" />
-        <IconButton onClick={() => setOpenSidebar(true)} name="Menu" icon="../../public/menu.png" />
-        <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="../../public/activity.png" />
-        <IconButton onClick={() => setOpenMap(true)} name="Map" icon="../../public/pin.png" />
-        <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="../../public/friends.png" />
+    <div className="navbar">
+        <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
+        <IconButton onClick={() => setOpenSidebar(true)} name="Menu" icon="/menu.png" />
+        <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="/activity.png" />
+        <IconButton onClick={() => setOpenMap(true)} name="Map" icon="/pin.png" />
+        <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />
     </div>
   )
 }
