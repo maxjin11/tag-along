@@ -19,7 +19,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-export async function googleSignIn() {
+export function googleSignIn() {
     signInWithPopup(auth, provider).then((result) => {
         const credential = GoogleAuthProvider.credentialFromResult(result);
         if (credential != null) {
@@ -30,6 +30,8 @@ export async function googleSignIn() {
         }
         
         const user = result.user;
+
+        return user;
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
@@ -38,7 +40,7 @@ export async function googleSignIn() {
     });
 }
 
-export async function googleSignOut() {
+export function googleSignOut() {
     signOut(auth).then(() => {
         console.log("Signed out.");
     }).catch((error) => {
