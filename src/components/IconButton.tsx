@@ -9,7 +9,6 @@ interface IconButtonProps {
 }
 
 function IconButton({ onClick, name, icon }: IconButtonProps) {
-  
   return (
     <div className="icon-button" onClick={onClick}>
         <img src={icon} alt={name}></img>
