@@ -1,46 +1,34 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { createDocumentRegistry } from "typescript";
-import env from "react-dotenv";
-
+import { auth} from "../firebase";
 const provider = new GoogleAuthProvider();
 provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
 
-const firebaseConfig = {
-    apiKey: env.FIREBASE_API_KEY,
-    authDomain: "fir-test-44f77.firebaseapp.com",
-    projectId: "fir-test-44f77",
-    storageBucket: "fir-test-44f77.appspot.com",
-    messagingSenderId: "860583052714",
-    appId: "1:860583052714:web:6d23c23cfb065ba8d997d3",
-    measurementId: "G-QR1QLK1NWR"
-};
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-export function googleSignIn() {
-    signInWithPopup(auth, provider).then((result) => {
+export async function googleSignIn(): Promise<any>{
+    return signInWithPopup(auth, provider).then((result) => { 
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        if (credential != null) {
+        if (credential != null) { 
             const token = credential.accessToken;
+            const user = result.user;  
             console.log("Credential found.")
-        } else {
+            return {user, token}
+        } else {  
             console.log("Credential not found.")    
-        }
-        
-        const user = result.user;
-
-        return user;
+            return {user: null, token: null}
+        } 
     }).catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
         const email = error.customData.email;
+        console.log(error)
         const credential = GoogleAuthProvider.credentialFromError(error);
+        return {user: null, token: null}
     });
 }
 
-export function googleSignOut() {
+export async function googleSignOut() {
     signOut(auth).then(() => {
         console.log("Signed out.");
     }).catch((error) => {
