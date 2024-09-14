@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { getUserById } from '../services/userService';
-import { MapView, useMapData, useMap, Label, useEvent } from '@mappedin/react-sdk';
+import MappedIn, { MapView, useMapData, useMap, Label, useEvent } from '@mappedin/react-sdk';
 import '@mappedin/react-sdk/lib/esm/index.css';
-import { createActivity } from '../services/activityService';
+import { createActivity, getActivityById } from '../services/activityService';
 
 interface Props {
   user:any
@@ -12,21 +12,41 @@ interface Props {
 function MyCustomComponent( { user }: Props) {
   const { mapView, mapData } = useMap();
 
-    mapData.getByType('space').forEach(space => {
-        mapView.updateState(space, {
-            interactive: true,
-            hoverColor: "#98FB98"
-        });
-    });
+  mapData.getByType('space').forEach(space => {
+      mapView.updateState(space, {
+          interactive: true,
+          hoverColor: "#98FB98"
+      });
+  });
+
+  const loadActivites = async () => {
+    for (const friend of user.friends) {
+      const friendInfo = await getUserById(friend);
+      if (friendInfo) {
+        console.log(friendInfo.activities.length)
+        for (const activity in friendInfo.activities) {
+          const activityInfo = await getActivityById(activity);
+          if (activityInfo) {
+            console.log(activityInfo.title);
+            const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
+            mapView.Labels.add(coords, friendInfo.name, {
+              appearance: {
+              marker: {
+                icon: `<img width="50" height="50" src=${friendInfo.pfp} alt="friend" />`
+              }}
+            });
+          }
+        }
+      }
+    }
+  }
+
+  loadActivites();
 
   useEvent("click", (event) => {
     if (event.spaces[0]) {
       let activity = event.spaces[0];
       createActivity(Date.now(), activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.bio)
-      console.log("hi there");
-      mapView.Labels.add(activity, user.id);
-      mapView.Labels.all();
-      mapView.update();
     }
   })
 

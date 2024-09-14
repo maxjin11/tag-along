@@ -33,6 +33,7 @@ export async function getActivityById(id: string) {
       if (docSnap.exists()) {
         // Document data
         console.log("Document data:", docSnap.data());
+        return docSnap.data();
       } else {
         console.log("No such document!");
       }
