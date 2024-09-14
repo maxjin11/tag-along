@@ -6,6 +6,8 @@ import '@mappedin/react-sdk/lib/esm/index.css';
 import { createActivity, getActivityById } from '../services/activityService';
 import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
+import Sidebar from '../components/Sidebar';
+import IconButton from '../components/IconButton';
 import Core from '@mappedin/react-sdk/geojson/src/renderer';
 import Mappedin from '@mappedin/react-sdk';
 
@@ -30,6 +32,7 @@ function MyCustomComponent( { user }: Props) {
   const [userLocation, setUserLocation] = useState<coord>({ latitude:0, longitude:0 });
   const [timeState, setTimeState] = useState(0);
   const [myLabels, setMyLabels] = useState<friendActivity[]>([]);
+  const [openSidebar, setOpenSidebar] = useState(false);
 
   useEffect(() => {
     mapData.getByType('space').forEach(space => {
@@ -81,6 +84,11 @@ function MyCustomComponent( { user }: Props) {
 
   return (
     <>
+      {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
+          <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
+      </div>}
+      <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/>   
+ 
       <AddActivity location={ locationState } time={ timeState }></AddActivity>
       {/* {mapData.getByType("space").map((space) => {
         return <Label key={space.center.latitude} target={space.center} text={space.name} />;
