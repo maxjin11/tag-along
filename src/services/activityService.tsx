@@ -61,12 +61,14 @@ export async function deleteActivity(id: string) {
   try {
     const docRef = doc(db, "activities", id);
     const activity = await getDoc(docRef);
-    const activityData = activity.data();
-    const userId = activityData.user; 
-
-    const userRef = doc(db, "users", userId);
-    await updateDoc(userRef, {activities: arrayRemove(docRef.id)})
-    await deleteDoc(docRef);
+    if (activity.exists()) {
+      const userId = activity.data().user;
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {activities: arrayRemove(userRef.id)})
+      await deleteDoc(docRef);
+    } else {
+      console.log("No activity exists");
+    }
   } catch (error) {
     console.error("Error deleting document:", error);
   } 
