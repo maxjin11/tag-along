@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import IconButton from './IconButton';
 import '../styles/Navbar.css';
-
+import ProfilePopup from './ProfilePopup';
 // Navbar at the top of site that has the profile + sidebar + feed + mapview buttons
 
 function Navbar() {
@@ -23,6 +23,8 @@ function Navbar() {
             <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />
             <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
         </div>
+
+        <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
     </div>
   )
 }
