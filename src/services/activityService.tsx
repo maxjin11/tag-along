@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import env from "react-dotenv";
+
 // Initialize Firebase
 const app = initializeApp({
     apiKey: env.FIREBASE_API_KEY,
@@ -25,6 +26,8 @@ export async function createActivity(time: string, location: string, title: stri
       bio: bio
     });
     console.log("Document written with ID: ", docRef.id);
+    const userRef = doc(db, "users", userId);
+    await updateDoc(userRef, {activities: arrayUnion(docRef.id)})
     return docRef.id
   } catch (e) {
     console.error("Error adding document: ", e);
@@ -51,5 +54,18 @@ export async function getActivityById(id: string) {
   }
 
 export async function deleteActivity(id: string) {
-  await deleteDoc(doc(db, "activities", id));
+  try {
+    const docRef = doc(db, "activities", id);
+    const activity = await getDoc(docRef);
+    if (activity.exists()) {
+      const userId = activity.data().user;
+      const userRef = doc(db, "users", userId);
+      await updateDoc(userRef, {activities: arrayRemove(userRef.id)})
+      await deleteDoc(docRef);
+    } else {
+      console.log("No activity exists");
+    }
+  } catch (error) {
+    console.error("Error deleting document:", error);
+  } 
 }
