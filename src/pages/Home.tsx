@@ -4,6 +4,7 @@ import { getUserById } from '../services/userService';
 import MappedIn, { MapView, useMapData, useMap, Label, useEvent } from '@mappedin/react-sdk';
 import '@mappedin/react-sdk/lib/esm/index.css';
 import { createActivity, getActivityById } from '../services/activityService';
+import AddActivity from '../components/AddActivity';
 
 interface Props {
   user:any
@@ -11,6 +12,8 @@ interface Props {
 
 function MyCustomComponent( { user }: Props) {
   const { mapView, mapData } = useMap();
+  const [locationState, setLocationState] = useState("");
+  const [timeState, setTimeState] = useState(0);
 
   mapData.getByType('space').forEach(space => {
       mapView.updateState(space, {
@@ -46,12 +49,16 @@ function MyCustomComponent( { user }: Props) {
   useEvent("click", (event) => {
     if (event.spaces[0]) {
       let activity = event.spaces[0];
-      createActivity(Date.now(), activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.bio)
+      const curTime = Date.now();
+      createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.bio)
+      setLocationState(activity.name);
+      setTimeState(curTime);
     }
   })
 
   return (
     <>
+      <AddActivity location={ locationState } time={ timeState }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return <Label key={space.center.latitude} target={space.center} text={space.name} />;
       })}
