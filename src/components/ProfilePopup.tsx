@@ -14,7 +14,7 @@ function ProfilePopup( { handleClose, isOpen }: Props) {
     <div className = "sbg-blue-500 ml-[150px] mt-[15px] justify-center align-middle absolute">
       <div className=" absolute flex flex-col space-y-4 bg-gray-200 rounded-lg shadow-lg w-96 p-4 h-auto border border-gray-500">
         <button className="absolute top-2 right-2 text-gray-800 hover:text-gray-600 focus:outline-none">
-          <svg className="-left-80 w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" onClick={handleClose}>
+          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" onClick={handleClose}>
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
