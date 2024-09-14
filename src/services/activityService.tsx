@@ -3,11 +3,12 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore, updateDoc, ar
 import env from "react-dotenv";
 import { db } from "../firebase";
 
-export async function createActivity(time: string, location: string, title: string, userId: string, bio?: string){
+export async function createActivity(time: number, latitude: number, longitude:number, title: string, userId: string, bio?: string){
   try {
     const docRef = await addDoc(collection(db, "activities"), {
       time: time,
-      location: location,
+      latitude: latitude,
+      longitude: longitude,
       title: title,
       user: userId,
       bio: bio

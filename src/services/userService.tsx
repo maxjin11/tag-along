@@ -22,6 +22,7 @@ export async function createUserWithId(id: string, name: string, pfp: string, bi
 
   const docRef = doc(db, "users", id);
   const userData = {
+    id:id,
     name: name,
     pfp: pfp,
     bio: bio ?? null,
