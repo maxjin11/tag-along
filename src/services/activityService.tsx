@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, deleteDoc, doc, getDoc, getFirestore, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import env from "react-dotenv";
 import { db } from "../firebase";
 
@@ -40,6 +40,14 @@ export async function getActivityById(id: string) {
       console.error("Error getting document:", error);
     }
   }
+
+export async function getActivityList() {
+  const querySnapshot = await getDocs(collection(db, "activities"));
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+  })
+}
 
 export async function deleteActivity(id: string) {
   try {

@@ -14,10 +14,10 @@ function Navbar() {
 
   return (
     <div className="navbar">
-        <div className="left">
+        <div className="navbar-left">
             <IconButton onClick={() => setOpenSidebar(true)} name="Menu" icon="/menu.png" />
         </div>
-        <div className="right">
+        <div className="navbar-right">
             <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="/activity.png" />
             <IconButton onClick={() => setOpenMap(true)} name="Map" icon="/pin.png" />
             <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />

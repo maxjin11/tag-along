@@ -5,10 +5,10 @@
     background-color: aquamarine;
 }
 
-.left {
+.navbar-left {
     float: left;
 }
 
-.right {
+.navbar-right {
     float: right;
 }
