@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import IconButton from './IconButton';
 import ProfilePopup from './ProfilePopup';
 import FriendsPopup from './FriendsPopup';
@@ -17,6 +17,13 @@ function Sidebar({handleClose, isOpen, user, friendActivities, myActivities}: Si
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
   const [openFriends, setOpenFriends] = useState(false); 
+
+  useEffect(() => {
+    setOpenProfile(false);
+    setOpenFeed(false);
+    setOpenFriends(false);
+  }, [isOpen])
+
   return (  
 
   <div
