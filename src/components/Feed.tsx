@@ -22,7 +22,7 @@ function Feed( { handleClose, isOpen, activities }: Props) {
             <div>
               {activities.map((obj: any) => {
                 return (
-                  <Activity username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} />
+                  <Activity username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} time={obj.time}/>
                 )
               })}
             </div>

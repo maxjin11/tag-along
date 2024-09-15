@@ -7,10 +7,11 @@ interface ActivityProps {
   username: string,
   pfp: string,
   title: string,
-  bio: string
+  bio: string,
+  time: string
 }
 
-function Activity({username, pfp, title, bio}: ActivityProps) {
+function Activity({username, pfp, title, bio, time}: ActivityProps) {
   return (
     <div className="mb-4 min-h-24">
       <hr className = "border-t-2 border-gray-300 mt-4" />
@@ -22,7 +23,7 @@ function Activity({username, pfp, title, bio}: ActivityProps) {
         </div>
 
         <div className = "flex-1 flex flex-row justify-center items-center">
-          <p>4:30 ● {title}</p>
+          <p>{time} ● {title}</p>
         </div>
           {bio}
       </div>
