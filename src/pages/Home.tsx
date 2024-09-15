@@ -9,6 +9,7 @@ import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
 import ActivityForm from '../components/ActivityForm';
+import { useGeolocated } from "react-geolocated";
 
 type TCameraTarget = any;
 
