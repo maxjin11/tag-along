@@ -34,7 +34,7 @@ function Sidebar({handleClose, isOpen, user, activities}: SidebarProps) {
       <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
       <IconButton onClick={() => null} name="Settings" icon="/settings.png" />
  
-      <FriendsPopup handleClose={() => setOpenFriends(false)} isOpen={openFriends && isOpen} userId={userId} /> 
+      <FriendsPopup handleClose={() => setOpenFriends(false)} isOpen={openFriends && isOpen} userId={user.id} /> 
 
       <ProfilePopup user = {user} handleClose={() => setOpenProfile(false)} isOpen={openProfile && isOpen} />
  
