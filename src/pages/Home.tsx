@@ -8,6 +8,7 @@ import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
+import ActivityForm from '../components/ActivityForm';
 
 type TCameraTarget = any;
 
@@ -22,12 +23,12 @@ function MyCustomComponent( { user }: Props) {
   const [myLabels, setMyLabels] = useState<DocumentData[]>([]);
   const [dest, setDest] = useState<MappedIn.Coordinate>();
   const [myLocation, setMyLocation] = useState<MappedIn.Coordinate>();
-  const [directions, setDirections] = useState<MappedIn.Directions>();
-
+  const [directions, setDirections] = useState<MappedIn.Directions>(); 
   const destination = (myLocation && dest) ? mapView.getDirections(myLocation, dest) : undefined
   const [openSidebar, setOpenSidebar] = useState(false);
   const [focused, setFocused] = useState(false);
-  
+  const [clickCoordinates, setClickCoordinates] = useState([0, 0])
+
   const defaultCameraPosition: TCameraTarget = {
     bearing: mapView.Camera.bearing,
     pitch: mapView.Camera.pitch,
@@ -77,12 +78,12 @@ function MyCustomComponent( { user }: Props) {
       setDest(undefined);
     }
     if (event.spaces[0]) {
-      let activity = event.spaces[0];
+      let currActivity = event.spaces[0];
       const curTime = Date.now();
-      createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
-      setLocationState(activity.name);
+      //createActivity(curTime, currActivity.center.latitude, currActivity.center.longitude, currActivity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
+      setLocationState(currActivity.name);
       setTimeState(curTime);
-
+      setClickCoordinates([currActivity.center.latitude, currActivity.center.longitude])
       
     }
     if (focused) {
@@ -103,7 +104,7 @@ function MyCustomComponent( { user }: Props) {
         </div>}
         <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
 
-        {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
+        {focused && <ActivityForm user = {user} coordinates = {clickCoordinates} />}
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}
