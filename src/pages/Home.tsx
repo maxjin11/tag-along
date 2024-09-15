@@ -88,7 +88,10 @@ function MyCustomComponent( { user }: Props) {
       setTimeState(curTime);
 
       if (focused) {
-        mapView.Camera.set(defaultCameraPosition);
+        mapView.Camera.animateTo(defaultCameraPosition, {
+          duration: 300,
+          easing: 'ease-in-out'
+        });
 		    setFocused(false);
       } else {
         mapView.Camera.focusOn(event.spaces[0]);
