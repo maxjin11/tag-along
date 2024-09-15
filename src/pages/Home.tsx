@@ -9,6 +9,8 @@ import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
 import ActivityForm from '../components/ActivityForm';
+import ActivityInfo from '../components/ActivityInfo';
+import ActivityContainer from '../components/ActivityContainer';
 
 type TCameraTarget = any;
 
@@ -29,6 +31,14 @@ function MyCustomComponent( { user }: Props) {
   const [openSidebar, setOpenSidebar] = useState(false);
   const [focused, setFocused] = useState(false);
   const [clickCoordinates, setClickCoordinates] = useState([0, 0])
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedActivityInfo, setSelectedActivityInfo] = useState({
+    username: "",
+    pfp: "",
+    title: "",
+    bio: "",
+    time: ""
+  })
 
   const defaultCameraPosition: TCameraTarget = {
     bearing: mapView.Camera.bearing,
@@ -118,7 +128,7 @@ function MyCustomComponent( { user }: Props) {
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
         <Sidebar user = {user} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} friendActivities={myLabels} myActivities={selfLabels}/> 
-
+        <ActivityInfo username={selectedActivityInfo.username} pfp={selectedActivityInfo.pfp} title={selectedActivityInfo.title} bio={selectedActivityInfo.bio} time={selectedActivityInfo.time} handleClose={() => setIsOpen(false)} isOpen={isOpen} />
         <AddActivity user = {user} coordinates = {clickCoordinates} location={ locationState } time={ timeState } revealed={ focused }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
@@ -126,10 +136,20 @@ function MyCustomComponent( { user }: Props) {
       {myLabels.length > 0 && myLabels.map((activity) => {
         const coords = new MappedIn.Coordinate(activity.latitude, activity.longitude);
         const handeClick = () => {
-          setDest(coords)
+          setDest(coords);
+          setSelectedActivityInfo({
+            username: activity.username, 
+            pfp: activity.pfp, 
+            title: activity.title,
+            bio: activity.bio,
+            time: activity.time
+          });
+          console.log(selectedActivityInfo);
+          setIsOpen(true);
         }
-        return <Marker key={activity.id} target={coords} options={{rank: "always-visible"}}>
-          <img src={activity.pfp} onClick={handeClick} className='rounded-full size-10 cursor-pointer hover:scale-110' />
+        return <Marker key={activity.id} target={coords}>
+          {/* <img src={activity.pfp} onClick={handeClick} className='rounded-full size-10 cursor-pointer hover:scale-110' /> */}
+          <ActivityContainer username={activity.username} pfp={activity.pfp} title={activity.title} bio={activity.bio} time={activity.time} />
         </Marker>
       })}
       {myLocation && <Marker key={user.id} target={myLocation} options={{rank: "always-visible"}} >

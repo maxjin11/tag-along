@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { friendById } from "../services/userService";
 
 interface Props {
     userId:string;
@@ -8,6 +9,22 @@ interface Props {
 
 export default function FriendsPopup({ userId, handleClose, isOpen }: Props) {
     const [text, setText] = useState("");
+    const [submission, setSubmission] = useState("");
+    const [success, setSuccess] = useState(0);
+
+    useEffect(() => {
+      const submit = async () => {
+        const result = await friendById(userId, submission)
+        if (result) {
+          setSuccess(1);
+        } else {
+          setSuccess(2);
+        }
+      }
+
+      submit();
+    }, [submission]);
+
     if (!isOpen) return null;
     return (
         <div className = "sbg-blue-500 ml-[150px] mt-[150px] justify-center align-middle absolute">
@@ -18,13 +35,12 @@ export default function FriendsPopup({ userId, handleClose, isOpen }: Props) {
           </svg>
         </button>
         <div className="text-gray-700 rounded text-3xl font-bold">Add Friend</div>
-        <input className="rounded-3xl p-2 border-slate-200 text-slate-600 w-48" value={text} onChange={(e) => {
+        <input className="rounded-3xl p-2 border-slate-200 text-slate-600 w-48" placeholder="Enter user ID" value={text} onChange={(e) => {
             setText(e.target.value)}} ></input>
-        <div className="w-48 rounded-3xl drop-shadow-2xl bg-slate-300 p-4 align-middle text-center cursor-pointer hover:scale-105" onClick={() => {
-
-        }}>
+        <div className="w-48 rounded-3xl drop-shadow-2xl bg-slate-300 p-4 align-middle text-center cursor-pointer hover:scale-105" onClick={() => setSubmission(text)}>
             Submit
         </div>
+        {success === 1 ? <div className="text-green-600">Success!</div> : (success === 2 ? <div className="text-red-600">Error adding friend</div> : null)}
       </div>   
     </div>
     )
