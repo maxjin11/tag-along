@@ -20,9 +20,9 @@ function Feed( { handleClose, isOpen, activities }: Props) {
           <div className="bg-white p-6 rounded-lg shadow-lg h-[100%] w-[100%] overflow-scroll">
             <h2 className="text-xl font-bold mb-4">Feed</h2>
             <div>
-              {activities.map((activity: any) => {
+              {activities.map((obj: any) => {
                 return (
-                  <Activity activity={activity} />
+                  <Activity username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} />
                 )
               })}
             </div>
