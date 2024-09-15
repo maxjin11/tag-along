@@ -18,7 +18,7 @@ function ActivityForm({user, coordinates}: Props) {
       function handleSelect(e:any) {
           e.preventDefault() 
           
-          createActivity(formData.startTime, coordinates[0], coordinates[1], formData.title, user.id, user.name, user.pfp, user.bio)
+          createActivity(formData.startTime, coordinates[0], coordinates[1], formData.title, user.id, user.name, user.pfp, formData.description)
           setFormData({
             title: '',
             description: '',
