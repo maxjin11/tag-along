@@ -16,7 +16,6 @@ interface SidebarProps {
 function Sidebar({handleClose, isOpen, user, friendActivities, myActivities}: SidebarProps) {  
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
-  const [openMap, setOpenMap] = useState(false);
   const [openFriends, setOpenFriends] = useState(false); 
   return (  
 
@@ -29,13 +28,12 @@ function Sidebar({handleClose, isOpen, user, friendActivities, myActivities}: Si
       <div onClick={handleClose} className = "cursor-pointer w-[15px] h-[15px] mt-[10px] mb-[20px]">
         <img src="/close.png"></img>
      </div> 
-      <IconButton onClick={() => setOpenFeed(true)} name="Activity" icon="/activity.png" />
-      <IconButton onClick={() => setOpenMap(true)} name="Map" icon="/pin.png" />
-      <IconButton onClick={() => setOpenFriends(true)} name="Friends" icon="/friends.png" />
-      <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
+      <IconButton onClick={() => {setOpenFeed(true); setOpenFriends(false); setOpenProfile(false);}} name="Activity" icon="/activity.png" />
+      <IconButton onClick={() => {setOpenFriends(true); setOpenFeed(false); setOpenProfile(false);}} name="Friends" icon="/friends.png" />
+      <IconButton onClick={() => {setOpenProfile(true); setOpenFeed(false); setOpenFriends(false)}} name="Profile" icon="/user.png" />
       <IconButton onClick={() => null} name="Settings" icon="/settings.png" />
  
-      <FriendsPopup handleClose={() => setOpenFriends(false)} isOpen={openFriends && isOpen} userId={user.id} /> 
+      <FriendsPopup handleClose={() => {setOpenFriends(false)}} isOpen={openFriends && isOpen} userId={user.id} /> 
 
       <ProfilePopup user = {user} handleClose={() => setOpenProfile(false)} isOpen={openProfile && isOpen} />
  
