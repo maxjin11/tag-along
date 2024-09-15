@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { addDoc, collection, doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc, getFirestore, setDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../firebase";
 
 export async function createUser(name: string, pfp: string, bio?: string){ 
@@ -57,4 +57,15 @@ export async function getUserById(id: string) {
       console.error("Error getting document:", error);
     }
   }
-  
+
+export async function friendById(id1: string, id2: string) {
+  const docRef1 = doc(db, "users", id1);
+  const docRef2 = doc(db, "users", id2);
+
+  try {
+    await updateDoc(docRef1, {friends: arrayUnion(id2)});
+    await updateDoc(docRef2, {friends: arrayUnion(id1)});
+  } catch (error) {
+    console.error("Error adding friend", error);
+  }
+}
