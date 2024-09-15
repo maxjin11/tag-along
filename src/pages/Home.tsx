@@ -73,25 +73,25 @@ function MyCustomComponent( { user }: Props) {
   }, [])
 
   useEvent("click", (event) => {
+    setOpenSidebar(false)
     if (!event.labels.length) {
       setDest(undefined);
     }
-    if (event.spaces[0]) {
-      let activity = event.spaces[0];
-      const curTime = Date.now();
-      createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
-      setLocationState(activity.name);
-      setTimeState(curTime);
-
-      
-    }
+    // if (event.spaces[0]) {
+    //   console.log("you shouldn't be here");
+    //   let activity = event.spaces[0];
+    //   const curTime = Date.now();
+    //   createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
+    //   setLocationState(activity.name);
+    //   setTimeState(curTime);
+    // }
     if (focused) {
       mapView.Camera.animateTo(defaultCameraPosition, {
         duration: 300,
         easing: 'ease-in-out'
       });
       setFocused(false);
-    } else {
+    } else if (event.spaces[0]) {
       mapView.Camera.focusOn(event.spaces[0]);
       setFocused(true);
     }
@@ -101,7 +101,7 @@ function MyCustomComponent( { user }: Props) {
       {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
-        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+        <Sidebar userId={user.id} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
 
         {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
       {mapData.getByType("space").map((space) => {

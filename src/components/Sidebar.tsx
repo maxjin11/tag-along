@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import IconButton from './IconButton';
 import ProfilePopup from './ProfilePopup';
+import FriendsPopup from './FriendsPopup';
 // Sidebar that opens when you press menu button
 
 interface SidebarProps {
   handleClose: () => void,
-  isOpen: boolean
+  isOpen: boolean;
+  userId:string;
 }
 
-function Sidebar({handleClose, isOpen}: SidebarProps) {
+function Sidebar({handleClose, isOpen, userId}: SidebarProps) {
   
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
@@ -31,8 +33,8 @@ function Sidebar({handleClose, isOpen}: SidebarProps) {
       <IconButton onClick={() => setOpenProfile(true)} name="Profile" icon="/user.png" />
       <IconButton onClick={() => null} name="Settings" icon="/settings.png" />
  
-
-      <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
+      <FriendsPopup handleClose={() => setOpenFriends(false)} isOpen={openFriends && isOpen} userId={userId} /> 
+      <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile && isOpen} />
     </div>
   )
 }
