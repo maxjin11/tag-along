@@ -8,10 +8,11 @@ interface SidebarProps {
   handleClose: () => void,
   isOpen: boolean,
   user: {name: string, id: string, pfp: string, friends: string[]},
-  activities: any
+  friendActivities: any,
+  myActivities: any
 }
 
-function Sidebar({handleClose, isOpen, user, activities}: SidebarProps) {  
+function Sidebar({handleClose, isOpen, user, friendActivities, myActivities}: SidebarProps) {  
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
   const [openMap, setOpenMap] = useState(false);
@@ -36,7 +37,7 @@ function Sidebar({handleClose, isOpen, user, activities}: SidebarProps) {
 
       <ProfilePopup user = {user} handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
  
-      <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} activities={activities}/>
+      <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} friendActivities={friendActivities} myActivities={myActivities}/>
     </div>
   )
 }
