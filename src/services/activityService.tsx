@@ -3,7 +3,7 @@ import { addDoc, collection, deleteDoc, doc, getDoc, getDocs, getFirestore, upda
 import env from "react-dotenv";
 import { db } from "../firebase";
 
-export async function createActivity(time: number, latitude: number, longitude:number, title: string, userId: string, bio?: string){
+export async function createActivity(time: number, latitude: number, longitude:number, title: string, userId: string, username: string, pfp: string, bio?: string){
   try {
     const docRef = await addDoc(collection(db, "activities"), {
       time: time,
@@ -11,6 +11,8 @@ export async function createActivity(time: number, latitude: number, longitude:n
       longitude: longitude,
       title: title,
       user: userId,
+      username: username,
+      pfp: pfp,
       bio: bio
     });
     console.log("Document written with ID: ", docRef.id);
