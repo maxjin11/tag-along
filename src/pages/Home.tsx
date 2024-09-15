@@ -21,6 +21,7 @@ function MyCustomComponent( { user }: Props) {
   const [locationState, setLocationState] = useState("");
   const [timeState, setTimeState] = useState(0);
   const [myLabels, setMyLabels] = useState<DocumentData[]>([]);
+  const [selfLabels, setSelfLabels] = useState<DocumentData[]>([]);
   const [dest, setDest] = useState<MappedIn.Coordinate>();
   const [myLocation, setMyLocation] = useState<MappedIn.Coordinate>();
   const [directions, setDirections] = useState<MappedIn.Directions>(); 
@@ -68,6 +69,18 @@ function MyCustomComponent( { user }: Props) {
         }
       }
       setMyLabels(labels);
+    }
+    const loadOwnActivities = async () => {
+      const labels: DocumentData[] = []
+      const activities = user.activities
+      for (let i = 0; i< activities.length; i++) {
+        const activityInfo = await getActivityById(activities[i]);
+        if (activityInfo) {
+          const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
+          labels.push(activityInfo);
+        }
+      } 
+      setSelfLabels(labels);
     }
 
     loadActivities();
