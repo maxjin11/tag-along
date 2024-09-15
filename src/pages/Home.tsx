@@ -87,18 +87,18 @@ function MyCustomComponent( { user }: Props) {
   }, [])
 
   useEvent("click", (event) => {
+    setOpenSidebar(false)
     if (!event.labels.length) {
       setDest(undefined);
     }
-    if (event.spaces[0]) {
-      let currActivity = event.spaces[0];
-      const curTime = Date.now();
-      //createActivity(curTime, currActivity.center.latitude, currActivity.center.longitude, currActivity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
-      setLocationState(currActivity.name);
-      setTimeState(curTime);
-      setClickCoordinates([currActivity.center.latitude, currActivity.center.longitude])
-      
-    }
+    // if (event.spaces[0]) {
+    //   console.log("you shouldn't be here");
+    //   let activity = event.spaces[0];
+    //   const curTime = Date.now();
+    //   createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
+    //   setLocationState(activity.name);
+    //   setTimeState(curTime);
+    // }
     if (focused) {
       mapView.Camera.animateTo(defaultCameraPosition, {
         duration: 300,
