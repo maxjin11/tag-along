@@ -102,8 +102,8 @@ function MyCustomComponent( { user }: Props) {
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
         <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
-
-        {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
+        
+        <AddActivity location={ locationState } time={ timeState } revealed={ focused }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}
