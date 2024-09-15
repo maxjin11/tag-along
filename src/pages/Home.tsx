@@ -83,16 +83,17 @@ function MyCustomComponent( { user }: Props) {
       setLocationState(activity.name);
       setTimeState(curTime);
 
-      if (focused) {
-        mapView.Camera.animateTo(defaultCameraPosition, {
-          duration: 300,
-          easing: 'ease-in-out'
-        });
-		    setFocused(false);
-      } else {
-        mapView.Camera.focusOn(event.spaces[0]);
-        setFocused(true);
-      }
+      
+    }
+    if (focused) {
+      mapView.Camera.animateTo(defaultCameraPosition, {
+        duration: 300,
+        easing: 'ease-in-out'
+      });
+      setFocused(false);
+    } else {
+      mapView.Camera.focusOn(event.spaces[0]);
+      setFocused(true);
     }
   })
   return (
