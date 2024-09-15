@@ -17,7 +17,7 @@ function Sidebar({handleClose, isOpen}: SidebarProps) {
   return (  
 
   <div
-  className={`sidebar flex flex-col bg-slate-300 w-24 h-screen z-10 items-center fixed ease-in-out duration-300 ${
+  className={`sidebar top-0 left-0 absolute flex flex-col bg-slate-300 w-24 h-screen z-10 items-center ease-in-out duration-300 ${
     isOpen ? "translate-x-0 " : "-translate-x-full"
   }`}>  
 

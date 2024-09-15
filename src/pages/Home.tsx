@@ -6,6 +6,10 @@ import '@mappedin/react-sdk/lib/esm/index.css';
 import { createActivity, getActivityById } from '../services/activityService';
 import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
+import Sidebar from '../components/Sidebar';
+import IconButton from '../components/IconButton';
+
+type TCameraTarget = any;
 
 interface Props {
   user:any
@@ -21,6 +25,15 @@ function MyCustomComponent( { user }: Props) {
   const [directions, setDirections] = useState<MappedIn.Directions>();
 
   const destination = (myLocation && dest) ? mapView.getDirections(myLocation, dest) : undefined
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const [focused, setFocused] = useState(false);
+  
+  const defaultCameraPosition: TCameraTarget = {
+    bearing: mapView.Camera.bearing,
+    pitch: mapView.Camera.pitch,
+    zoomLevel: mapView.Camera.zoomLevel,
+    center: mapView.Camera.center,
+  };
 
   useEffect(() => {
     if (navigator.geolocation) {
@@ -69,12 +82,27 @@ function MyCustomComponent( { user }: Props) {
       createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
       setLocationState(activity.name);
       setTimeState(curTime);
+
+      if (focused) {
+        mapView.Camera.animateTo(defaultCameraPosition, {
+          duration: 300,
+          easing: 'ease-in-out'
+        });
+		    setFocused(false);
+      } else {
+        mapView.Camera.focusOn(event.spaces[0]);
+        setFocused(true);
+      }
     }
   })
-
   return (
     <>
-      <AddActivity location={ locationState } time={ timeState }></AddActivity>
+      {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
+            <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
+        </div>}
+        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+
+        {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}
