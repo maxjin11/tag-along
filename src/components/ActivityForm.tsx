@@ -1,8 +1,14 @@
 import React, { useState } from 'react'
-
+import { createActivity } from '../services/activityService';
 // Component for a singular activity in your feed
  
-function ActivityForm({ location }: { location: string }) {
+interface Props { 
+    user: {id: string, name: string, pfp: string, bio?: string}
+    coordinates: number[]
+    title?: string
+}
+
+function ActivityForm({user, coordinates}: Props) {
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -10,8 +16,9 @@ function ActivityForm({ location }: { location: string }) {
         endTime: 0,
       });
       function handleSelect(e:any) {
-          e.preventDefault()
-          console.log('Form submitted:', formData);
+          e.preventDefault() 
+          
+          createActivity(formData.startTime, coordinates[0], coordinates[1], formData.title, user.id, user.name, user.pfp, formData.description)
           setFormData({
             title: '',
             description: '',
@@ -29,6 +36,7 @@ function ActivityForm({ location }: { location: string }) {
       };
 
   return (
+    <div className="absolute flex z-1000 right-0 top-0 h-full">
     <div className="h-full">
         <form onSubmit = {handleSelect} className = "h-full flex flex-col w-96 gap-4 bg-slate-600 justify-center items-center"> 
             <div className = "w-[80%] flex gap-4 flex-col justify-center items-center">
@@ -45,8 +53,6 @@ function ActivityForm({ location }: { location: string }) {
             name = "description"
             value = {formData.description}
             onChange = {handleChange} />
-
-            <p className = "text-white text-xl">{location}</p>
 
             <div className = "w-full flex justify-around items-center">
                 <div className = "flex flex-col">
@@ -77,6 +83,7 @@ function ActivityForm({ location }: { location: string }) {
             </div>
         </form>
     </div> 
+    </div>
   )
 }
 

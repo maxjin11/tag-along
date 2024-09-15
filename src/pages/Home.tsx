@@ -8,6 +8,7 @@ import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
+import ActivityForm from '../components/ActivityForm';
 
 type TCameraTarget = any;
 
@@ -20,14 +21,15 @@ function MyCustomComponent( { user }: Props) {
   const [locationState, setLocationState] = useState("");
   const [timeState, setTimeState] = useState(0);
   const [myLabels, setMyLabels] = useState<DocumentData[]>([]);
+  const [selfLabels, setSelfLabels] = useState<DocumentData[]>([]);
   const [dest, setDest] = useState<MappedIn.Coordinate>();
   const [myLocation, setMyLocation] = useState<MappedIn.Coordinate>();
-  const [directions, setDirections] = useState<MappedIn.Directions>();
-
+  const [directions, setDirections] = useState<MappedIn.Directions>(); 
   const destination = (myLocation && dest) ? mapView.getDirections(myLocation, dest) : undefined
   const [openSidebar, setOpenSidebar] = useState(false);
   const [focused, setFocused] = useState(false);
-  
+  const [clickCoordinates, setClickCoordinates] = useState([0, 0])
+
   const defaultCameraPosition: TCameraTarget = {
     bearing: mapView.Camera.bearing,
     pitch: mapView.Camera.pitch,
@@ -68,6 +70,18 @@ function MyCustomComponent( { user }: Props) {
       }
       setMyLabels(labels);
     }
+    const loadOwnActivities = async () => {
+      const labels: DocumentData[] = []
+      const activities = user.activities
+      for (let i = 0; i< activities.length; i++) {
+        const activityInfo = await getActivityById(activities[i]);
+        if (activityInfo) {
+          const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
+          labels.push(activityInfo);
+        }
+      } 
+      setSelfLabels(labels);
+    }
 
     loadActivities();
   }, [])
@@ -101,9 +115,9 @@ function MyCustomComponent( { user }: Props) {
       {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
-        <Sidebar userId={user.id} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+        <Sidebar user = {user} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} activities={myLabels}/> 
 
-        {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
+        <AddActivity user = {user} coordinates = {clickCoordinates} location={ locationState } time={ timeState } revealed={ focused }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}

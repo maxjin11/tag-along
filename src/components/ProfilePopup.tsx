@@ -3,10 +3,11 @@ import React from 'react'
 // Modal/Popup that displays your profile
 interface Props {
   handleClose: () => void,
-  isOpen: boolean
+  isOpen: boolean,
+  user: {name: string, id: string, pfp: string, friends: string[]}
 }
 
-function ProfilePopup( { handleClose, isOpen }: Props) {
+function ProfilePopup( { handleClose, isOpen, user }: Props) {
   
   if (!isOpen) return null;
   
@@ -18,17 +19,18 @@ function ProfilePopup( { handleClose, isOpen }: Props) {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
           </svg>
         </button>
-        <div className="text-gray-700 rounded text-3xl font-bold">Bryan Cui</div>
+        <div className = "position: absolute, text-gray-400">{user.id}</div>
+        <div className="text-gray-700 rounded text-3xl font-bold">{user.name}</div>
 
         <div className=" text-black rounded text-center">
           <div className="flex items-center justify-center"><
-            img src="https://lh3.googleusercontent.com/a/ACg8ocKbywI6EiDXV7zq8Cm3b3bqJtrfuOXVTOZ7QwaMHeVJR5X_oSPx=s96-c" alt="Bryan Cui" className="w-28 h-28 rounded-full object-cover" />
+            img src={user.pfp} alt="Pfp" className="w-28 h-28 rounded-full object-cover" />
           </div>
         </div>
 
         <textarea placeholder = "No bio..." className="resize-none p-4 text-gray-500 rounded bg-gray-100 h-28" />
 
-        <div className="text-gray-500 rounded">69 Friends</div>
+        <div className="text-gray-500 rounded">{user.friends.length} Friends</div>
       </div>   
     </div>
       
