@@ -1,15 +1,13 @@
 import React, { act, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { getUserById } from '../services/userService';
-import MappedIn, { MapView, useMapData, useMap, Label, useEvent, Path } from '@mappedin/react-sdk';
+import MappedIn, { MapView, useMapData, useMap, Label, useEvent, Marker, Navigation } from '@mappedin/react-sdk';
 import '@mappedin/react-sdk/lib/esm/index.css';
 import { createActivity, getActivityById } from '../services/activityService';
 import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
-import Core from '@mappedin/react-sdk/geojson/src/renderer';
-import Mappedin from '@mappedin/react-sdk';
 
 type TCameraTarget = any;
 
@@ -17,23 +15,16 @@ interface Props {
   user:any
 }
 
-interface friendActivity {
-  coords: MappedIn.Coordinate;
-  data: DocumentData;
-  name: string
-}
-
-interface coord {
-  latitude: number;
-  longitude: number;
-}
- 
 function MyCustomComponent( { user }: Props) {
   const { mapView, mapData } = useMap();
   const [locationState, setLocationState] = useState("");
-  const [userLocation, setUserLocation] = useState<coord>({ latitude:0, longitude:0 });
   const [timeState, setTimeState] = useState(0);
-  const [myLabels, setMyLabels] = useState<friendActivity[]>([]);
+  const [myLabels, setMyLabels] = useState<DocumentData[]>([]);
+  const [dest, setDest] = useState<MappedIn.Coordinate>();
+  const [myLocation, setMyLocation] = useState<MappedIn.Coordinate>();
+  const [directions, setDirections] = useState<MappedIn.Directions>();
+
+  const destination = (myLocation && dest) ? mapView.getDirections(myLocation, dest) : undefined
   const [openSidebar, setOpenSidebar] = useState(false);
   const [focused, setFocused] = useState(false);
   
@@ -45,22 +36,22 @@ function MyCustomComponent( { user }: Props) {
   };
 
   useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const coords = new MappedIn.Coordinate(position.coords.latitude, position.coords.longitude);
+        setMyLocation(coords);
+      });
+    }
+
     mapData.getByType('space').forEach(space => {
       mapView.updateState(space, {
           interactive: true,
           hoverColor: "#98FB98"
       });
     });
-
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        setUserLocation(position.coords);
-      });
-    }
-
     
     const loadActivities = async () => {
-      const labels: friendActivity[] = []
+      const labels: DocumentData[] = []
 
       for (const friend of user.friends) {
         const friendInfo = await getUserById(friend);
@@ -70,12 +61,11 @@ function MyCustomComponent( { user }: Props) {
             const activityInfo = await getActivityById(activities[i]);
             if (activityInfo) {
               const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
-              labels.push({ coords:coords, data:activityInfo, name:friendInfo.name });
+              labels.push(activityInfo);
             }
           }
         }
       }
-      console.log(labels);
       setMyLabels(labels);
     }
 
@@ -83,10 +73,13 @@ function MyCustomComponent( { user }: Props) {
   }, [])
 
   useEvent("click", (event) => {
+    if (!event.labels.length) {
+      setDest(undefined);
+    }
     if (event.spaces[0]) {
       let activity = event.spaces[0];
       const curTime = Date.now();
-      createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.bio)
+      createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
       setLocationState(activity.name);
       setTimeState(curTime);
 
@@ -102,44 +95,32 @@ function MyCustomComponent( { user }: Props) {
       }
     }
   })
-
-  if (focused) {
-    return (
-      <>
-        {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
+  return (
+    <>
+      {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
         <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
 
-        <AddActivity location={ locationState } time={ timeState }></AddActivity>
-        {/* {mapData.getByType("space").map((space) => {
-          return <Label key={space.center.latitude} target={space.center} text={space.name} />;
-        })} */}
-        {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
-          const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
-          const directions = mapView.getDirections(userPosition, activity.coords);
-          return directions && <Path coordinate={directions.coordinates} />
-        })}
-      </>
-    );
-  } else {
-    return (
-      <>
-        {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
-            <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
-        </div>}
-        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
-        {/* {mapData.getByType("space").map((space) => {
-          return <Label key={space.center.latitude} target={space.center} text={space.name} />;
-        })} */}
-        {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
-          const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
-          const directions = mapView.getDirections(userPosition, activity.coords);
-          return directions && <Path coordinate={directions.coordinates} />
-        })}
-      </>
-    );    
-  }
+        {focused && <AddActivity location={ locationState } time={ timeState }></AddActivity>}
+      {mapData.getByType("space").map((space) => {
+        return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
+      })}
+      {myLabels.length > 0 && myLabels.map((activity) => {
+        const coords = new MappedIn.Coordinate(activity.latitude, activity.longitude);
+        const handeClick = () => {
+          setDest(coords)
+        }
+        return <Marker key={activity.id} target={coords} options={{rank: "always-visible"}}>
+          <img src={activity.pfp} onClick={handeClick} className='rounded-full size-10 cursor-pointer hover:scale-110' />
+        </Marker>
+      })}
+      {myLocation && <Marker key={user.id} target={myLocation} options={{rank: "always-visible"}} >
+        <img src={user.pfp} className='rounded-full size-10' />
+      </Marker>}
+      {destination && <Navigation directions={destination} />}
+    </>
+  );
 }
 
 function Home() {
