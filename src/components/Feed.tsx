@@ -4,10 +4,11 @@ import Activity from './Activity'
 // View that lets you see your friend's future activities
 interface Props {
   handleClose: () => void,
-  isOpen: boolean
+  isOpen: boolean,
+  activities: any
 }
 
-function Feed( { handleClose, isOpen }: Props) {
+function Feed( { handleClose, isOpen, activities }: Props) {
   if (!isOpen) return null;
 
   return ( 
@@ -15,15 +16,16 @@ function Feed( { handleClose, isOpen }: Props) {
       <div className="left-0 top-0 w-screen h-screen fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center" >
 
         <div className="left-0 top-0 absolute w-screen h-screen bg-black opacity-25" onClick = {handleClose}></div>
-        <div className="relative inset-0 flex items-center justify-center z-50 h-5/6 w-96 " >
-          <div className="bg-white p-6 rounded-lg shadow-lg h-5/6 w-96 overflow-scroll">
+        <div className="relative inset-0 flex items-center justify-center z-50 h-[90%] w-[80%]" >
+          <div className="bg-white p-6 rounded-lg shadow-lg h-[100%] w-[100%] overflow-scroll">
             <h2 className="text-xl font-bold mb-4">Feed</h2>
-            <Activity />
-            <Activity />
-            <Activity />
-            <Activity />
-            <Activity />
-            <Activity />
+            <div>
+              {activities.map((activity: any) => {
+                return (
+                  <Activity activity={activity} />
+                )
+              })}
+            </div>
           </div>
         </div>
       </div>
