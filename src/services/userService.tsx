@@ -65,7 +65,9 @@ export async function friendById(id1: string, id2: string) {
   try {
     await updateDoc(docRef1, {friends: arrayUnion(id2)});
     await updateDoc(docRef2, {friends: arrayUnion(id1)});
+    return true;
   } catch (error) {
     console.error("Error adding friend", error);
+    return false;
   }
 }
