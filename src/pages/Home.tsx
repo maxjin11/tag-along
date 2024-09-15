@@ -102,9 +102,9 @@ function MyCustomComponent( { user }: Props) {
       {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
-        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} activities={myLabels}/> 
+        <Sidebar user = {user} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} activities={myLabels}/> 
 
-        {focused && <ActivityForm user = {user} coordinates = {clickCoordinates} />}
+        <AddActivity user = {user} coordinates = {clickCoordinates} location={ locationState } time={ timeState } revealed={ focused }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}

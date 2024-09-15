@@ -7,11 +7,11 @@ import Feed from './Feed';
 interface SidebarProps {
   handleClose: () => void,
   isOpen: boolean,
+  user: {name: string, id: string, pfp: string, friends: string[]},
   activities: any
 }
 
-function Sidebar({handleClose, isOpen, activities}: SidebarProps) {
-  
+function Sidebar({handleClose, isOpen, user, activities}: SidebarProps) {  
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
   const [openMap, setOpenMap] = useState(false);
@@ -34,7 +34,7 @@ function Sidebar({handleClose, isOpen, activities}: SidebarProps) {
       <IconButton onClick={() => null} name="Settings" icon="/settings.png" />
  
 
-      <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
+      <ProfilePopup user = {user} handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
  
       <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} activities={activities}/>
     </div>
