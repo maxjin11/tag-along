@@ -11,6 +11,8 @@ import IconButton from '../components/IconButton';
 import Core from '@mappedin/react-sdk/geojson/src/renderer';
 import Mappedin from '@mappedin/react-sdk';
 
+type TCameraTarget = any;
+
 interface Props {
   user:any
 }
@@ -33,6 +35,14 @@ function MyCustomComponent( { user }: Props) {
   const [timeState, setTimeState] = useState(0);
   const [myLabels, setMyLabels] = useState<friendActivity[]>([]);
   const [openSidebar, setOpenSidebar] = useState(false);
+  const [focused, setFocused] = useState(false);
+  
+  const defaultCameraPosition: TCameraTarget = {
+    bearing: mapView.Camera.bearing,
+    pitch: mapView.Camera.pitch,
+    zoomLevel: mapView.Camera.zoomLevel,
+    center: mapView.Camera.center,
+  };
 
   useEffect(() => {
     mapData.getByType('space').forEach(space => {
@@ -79,27 +89,57 @@ function MyCustomComponent( { user }: Props) {
       createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.bio)
       setLocationState(activity.name);
       setTimeState(curTime);
+
+      if (focused) {
+        mapView.Camera.animateTo(defaultCameraPosition, {
+          duration: 300,
+          easing: 'ease-in-out'
+        });
+		    setFocused(false);
+      } else {
+        mapView.Camera.focusOn(event.spaces[0]);
+        setFocused(true);
+      }
     }
   })
 
-  return (
-    <>
-      {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
-          <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
-      </div>}
-      <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/>   
- 
-      <AddActivity location={ locationState } time={ timeState }></AddActivity>
-      {/* {mapData.getByType("space").map((space) => {
-        return <Label key={space.center.latitude} target={space.center} text={space.name} />;
-      })} */}
-      {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
-        const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
-        const directions = mapView.getDirections(userPosition, activity.coords);
-        return directions && <Path coordinate={directions.coordinates} />
-      })}
-    </>
-  );
+  if (focused) {
+    return (
+      <>
+        {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
+            <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
+        </div>}
+        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+
+        <AddActivity location={ locationState } time={ timeState }></AddActivity>
+        {/* {mapData.getByType("space").map((space) => {
+          return <Label key={space.center.latitude} target={space.center} text={space.name} />;
+        })} */}
+        {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
+          const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
+          const directions = mapView.getDirections(userPosition, activity.coords);
+          return directions && <Path coordinate={directions.coordinates} />
+        })}
+      </>
+    );
+  } else {
+    return (
+      <>
+        {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
+            <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
+        </div>}
+        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+        {/* {mapData.getByType("space").map((space) => {
+          return <Label key={space.center.latitude} target={space.center} text={space.name} />;
+        })} */}
+        {myLabels.length > 0 && myLabels.map((activity: friendActivity) => {
+          const userPosition = new MappedIn.Coordinate(userLocation.latitude, userLocation.longitude) ?? activity.coords;
+          const directions = mapView.getDirections(userPosition, activity.coords);
+          return directions && <Path coordinate={directions.coordinates} />
+        })}
+      </>
+    );    
+  }
 }
 
 function Home() {
