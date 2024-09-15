@@ -6,10 +6,11 @@ import Feed from './Feed';
 
 interface SidebarProps {
   handleClose: () => void,
-  isOpen: boolean
+  isOpen: boolean,
+  activities: any
 }
 
-function Sidebar({handleClose, isOpen}: SidebarProps) {
+function Sidebar({handleClose, isOpen, activities}: SidebarProps) {
   
   const [openProfile, setOpenProfile] = useState(false);
   const [openFeed, setOpenFeed] = useState(false);
@@ -35,7 +36,7 @@ function Sidebar({handleClose, isOpen}: SidebarProps) {
 
       <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
  
-      <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} />
+      <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} activities={activities}/>
     </div>
   )
 }

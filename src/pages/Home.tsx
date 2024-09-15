@@ -92,7 +92,7 @@ function MyCustomComponent( { user }: Props) {
         easing: 'ease-in-out'
       });
       setFocused(false);
-    } else {
+    } else if (event.spaces[0]) {
       mapView.Camera.focusOn(event.spaces[0]);
       setFocused(true);
     }
@@ -102,7 +102,7 @@ function MyCustomComponent( { user }: Props) {
       {!openSidebar && <div className="cursor-pointer left-0 top-0 ml-[30px] float-left absolute mt-[20px] h-[30px] w-[30px] inline-block z-3">
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
-        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar}/> 
+        <Sidebar handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} activities={myLabels}/> 
 
         {focused && <ActivityForm user = {user} coordinates = {clickCoordinates} />}
       {mapData.getByType("space").map((space) => {
