@@ -22,7 +22,7 @@ export default function FriendsPopup({ userId, handleClose, isOpen }: Props) {
         }
       }
 
-      submit();
+      submission && submit();
     }, [submission]);
 
     if (!isOpen) return null;
