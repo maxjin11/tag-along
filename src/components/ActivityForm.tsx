@@ -29,8 +29,8 @@ function ActivityForm({ location }: { location: string }) {
       };
 
   return (
-    <div>
-        <form onSubmit = {handleSelect} className = "flex flex-col w-96 gap-4 bg-slate-600 justify-center items-center"> 
+    <div className="h-full">
+        <form onSubmit = {handleSelect} className = "h-full flex flex-col w-96 gap-4 bg-slate-600 justify-center items-center"> 
             <div className = "w-[80%] flex gap-4 flex-col justify-center items-center">
             <h1 className = "text-white text-2xl">New Activity</h1>
 
