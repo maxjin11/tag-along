@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import IconButton from './IconButton';
 import ProfilePopup from './ProfilePopup';
+import Feed from './Feed';
 // Sidebar that opens when you press menu button
 
 interface SidebarProps {
@@ -33,6 +34,8 @@ function Sidebar({handleClose, isOpen}: SidebarProps) {
  
 
       <ProfilePopup handleClose={() => setOpenProfile(false)} isOpen={openProfile} />
+ 
+      <Feed handleClose={() => setOpenFeed(false)} isOpen = {openFeed} />
     </div>
   )
 }
