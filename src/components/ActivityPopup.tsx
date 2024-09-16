@@ -1,7 +1,4 @@
-import React from 'react'
-import { StringMappingType } from 'typescript'
-
-// Component for a singular activity in your feed
+// Component for a singular activity
 
 interface ActivityInfoProps {
   username: string,

@@ -1,8 +1,7 @@
 import React, {useState} from "react";
-import ActivityInfo from "./ActivityInfo";
 import ActivityPopup from "./ActivityPopup";
 
-interface ActivityInfoProps {
+interface ActivityContainerProps {
     username: string,
     pfp: string,
     title: string,
@@ -10,7 +9,7 @@ interface ActivityInfoProps {
     time: string,
   }
 
-export default function ActivityContainer({username, pfp, title, bio, time}: ActivityInfoProps) {
+export default function ActivityContainer({username, pfp, title, bio, time}: ActivityContainerProps) {
     const [open, setOpen] = useState(false);
     return (<div>
         <img src={pfp} onClick={() => setOpen(!open)} className='rounded-full size-10 cursor-pointer hover:scale-110' />

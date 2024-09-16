@@ -1,15 +1,13 @@
-import React, { act, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { getUserById } from '../services/userService';
-import MappedIn, { MapView, useMapData, useMap, Label, useEvent, Marker, Navigation } from '@mappedin/react-sdk';
+import MappedIn, { MapView, useMapData, useMap, Label, useEvent, Marker } from '@mappedin/react-sdk';
 import '@mappedin/react-sdk/lib/esm/index.css';
-import { createActivity, getActivityById } from '../services/activityService';
+import { getActivityById } from '../services/activityService';
 import AddActivity from '../components/AddActivity';
 import { DocumentData } from 'firebase/firestore';
 import Sidebar from '../components/Sidebar';
 import IconButton from '../components/IconButton';
-import ActivityForm from '../components/ActivityForm';
-import ActivityInfo from '../components/ActivityInfo';
 import ActivityContainer from '../components/ActivityContainer';
 
 type TCameraTarget = any;
@@ -24,22 +22,11 @@ function MyCustomComponent( { user }: Props) {
   const [timeState, setTimeState] = useState(0);
   const [myLabels, setMyLabels] = useState<DocumentData[]>([]);
   const [selfLabels, setSelfLabels] = useState<DocumentData[]>([]);
-  const [dest, setDest] = useState<MappedIn.Coordinate>();
   const [myLocation, setMyLocation] = useState<MappedIn.Coordinate>();
-  const [directions, setDirections] = useState<MappedIn.Directions>(); 
-  const destination = (myLocation && dest) ? mapView.getDirections(myLocation, dest) : undefined
   const [openSidebar, setOpenSidebar] = useState(false);
   const [focused, setFocused] = useState(false);
-  const [clickCoordinates, setClickCoordinates] = useState([0, 0])
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedActivityInfo, setSelectedActivityInfo] = useState({
-    username: "",
-    pfp: "",
-    title: "",
-    bio: "",
-    time: ""
-  })
-
+  const [clickCoordinates, setClickCoordinates] = useState([0,0]);
+  
   const defaultCameraPosition: TCameraTarget = {
     bearing: mapView.Camera.bearing,
     pitch: mapView.Camera.pitch,
@@ -72,7 +59,6 @@ function MyCustomComponent( { user }: Props) {
           for (let i = 0; i < activities.length; i++) {
             const activityInfo = await getActivityById(activities[i]);
             if (activityInfo) {
-              const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
               labels.push(activityInfo);
             }
           }
@@ -87,7 +73,6 @@ function MyCustomComponent( { user }: Props) {
       for (let i = 0; i< activities.length; i++) {
         const activityInfo = await getActivityById(activities[i]);
         if (activityInfo) {
-          const coords = new MappedIn.Coordinate(activityInfo.latitude, activityInfo.longitude);
           labels.push(activityInfo);
         }
       } 
@@ -96,21 +81,17 @@ function MyCustomComponent( { user }: Props) {
 
     loadOwnActivities();
     loadActivities();
-  }, [])
+  }, [mapData, mapView, user.activities, user.friends])
 
   useEvent("click", (event) => {
     setOpenSidebar(false)
-    if (!event.labels.length) {
-      setDest(undefined);
+    if (event.spaces[0]) {
+      let activity = event.spaces[0];
+      console.log(activity.center);
+      setTimeState(Date.now());
+      setLocationState(activity.name);
+      setClickCoordinates([activity.center.latitude, activity.center.longitude]);
     }
-    // if (event.spaces[0]) {
-    //   console.log("you shouldn't be here");
-    //   let activity = event.spaces[0];
-    //   const curTime = Date.now();
-    //   createActivity(curTime, activity.center.latitude, activity.center.longitude, activity.name ?? "Unnamed Activity", user.id, user.name, user.pfp, user.bio)
-    //   setLocationState(activity.name);
-    //   setTimeState(curTime);
-    // }
     if (focused) {
       mapView.Camera.animateTo(defaultCameraPosition, {
         duration: 300,
@@ -128,34 +109,20 @@ function MyCustomComponent( { user }: Props) {
             <IconButton onClick={() => setOpenSidebar(true)} name="" icon="/menu.png"/>
         </div>}
         <Sidebar user = {user} handleClose={() => setOpenSidebar(false)} isOpen={openSidebar} friendActivities={myLabels} myActivities={selfLabels}/> 
-        <ActivityInfo username={selectedActivityInfo.username} pfp={selectedActivityInfo.pfp} title={selectedActivityInfo.title} bio={selectedActivityInfo.bio} time={selectedActivityInfo.time} handleClose={() => setIsOpen(false)} isOpen={isOpen} />
         <AddActivity user = {user} coordinates = {clickCoordinates} location={ locationState } time={ timeState } revealed={ focused }></AddActivity>
       {mapData.getByType("space").map((space) => {
         return space.name ? (<Label key={space.center.latitude} target={space.center} text={space.name} />) : null;
       })}
       {myLabels.length > 0 && myLabels.map((activity) => {
         const coords = new MappedIn.Coordinate(activity.latitude, activity.longitude);
-        const handeClick = () => {
-          setDest(coords);
-          setSelectedActivityInfo({
-            username: activity.username, 
-            pfp: activity.pfp, 
-            title: activity.title,
-            bio: activity.bio,
-            time: activity.time
-          });
-          console.log(selectedActivityInfo);
-          setIsOpen(true);
-        }
-        return <Marker key={activity.id} target={coords}>
-          {/* <img src={activity.pfp} onClick={handeClick} className='rounded-full size-10 cursor-pointer hover:scale-110' /> */}
+        console.log(`${activity.username}'s activity at ${coords.latitude}, ${coords.longitude}`);
+        return <Marker key={coords.id} target={coords} options={{rank:"always-visible"}}>
           <ActivityContainer username={activity.username} pfp={activity.pfp} title={activity.title} bio={activity.bio} time={activity.time} />
         </Marker>
       })}
       {myLocation && <Marker key={user.id} target={myLocation} options={{rank: "always-visible"}} >
-        <img src={user.pfp} className='rounded-full size-10' />
+        <img alt="Me" src={user.pfp} className='rounded-full size-10' />
       </Marker>}
-      {destination && <Navigation directions={destination} />}
     </>
   );
 }
@@ -191,10 +158,15 @@ function Home() {
         <div className = "font-bold text-2xl text-white">Loading...</div>  
       </div> 
     )
-  } 
+  }
+  if (error) {
+    <div className = "bg-slate-400 h-screen w-screen flex justify-center items-center">
+
+        <div className = "font-bold text-2xl text-white">{error.message}</div>  
+      </div> 
+  }
   return mapData && userInfo ? 
   (<div>
-    <img className='absolute z-50 top-0 right-0 m-8 size-16 rounded-full' src={userInfo.pfp}></img>
     <MapView mapData={mapData} style={{ width: '100vw', height: '100vh' }}><MyCustomComponent user={userInfo} /></MapView>
     </div>): null;
 }

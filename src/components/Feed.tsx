@@ -23,13 +23,13 @@ function Feed( { handleClose, isOpen, friendActivities, myActivities }: Props) {
             <div>
               {myActivities.map((obj: any) => {
                 return (
-                  <Activity username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} time={obj.time}/>
+                  <Activity key={obj.id} username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} time={obj.time}/>
                 )
               })}
 
               {friendActivities.map((obj: any) => {
                 return (
-                  <Activity username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} time={obj.time}/>
+                  <Activity key={obj.id} username={obj.username} pfp={obj.pfp} title={obj.title} bio={obj.bio} time={obj.time}/>
                 )
               })}
             </div>
